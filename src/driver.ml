@@ -1,6 +1,7 @@
 open Ast
 open Rename
 open Eval
+open Types
 
 type backend =
     EvalBackend
@@ -99,6 +100,8 @@ and Driver : DriverI = struct
 
     let renamed, new_scope = parse_and_rename options lexbuf scope in
     
+    let _ty = typecheck renamed in
+
     let res, new_env = EvalInst.eval_seq_state env renamed in
     res, new_env, new_scope
 

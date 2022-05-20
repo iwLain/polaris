@@ -30,6 +30,36 @@ end) =
 struct
   type name = Name.t
 
+  type ty =
+    (* Opt out of the type system *)
+    | Any
+    | Number
+    | String
+    | Bool
+    | Unit
+    | Null (*TODO: Should null be its own type (with ∀σ. null ≤ σ) or just (∀a. a)?*)
+    (* Unification variables *)
+    | Var of name
+    (* (Uncurried) Function types *)
+    | Fun of ty list * ty
+    (* Skolem type constants. Only used internally *)
+    | Skol of name * int
+    (* Universally quantified types *)
+    | Forall of name list * ty
+    (* Unions (ty | ty) *)
+    | Union of ty * ty
+    (* Lists with the same type for each element
+      (might be an intersection type) *)
+    | List of ty
+    (* Lists with a fixed number of (possibly heterogenous) elements *)
+    | TupleList of ty list
+    (* Maps with an unspecified number of parameters that all have the same type *)
+    | Map of ty
+    (* Maps with a fixed set of heterogenous fields *)
+    | Record of (string * ty) list
+    (* Maps which extend a type variable with a fixed set of heterogenous fields *)
+    | OpenRecord of (string * ty) list * name
+
   type expr =
     (* Lambda calculus *)
     | Var of loc * name                     (* x *)
